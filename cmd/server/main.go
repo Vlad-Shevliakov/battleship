@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"time"
 )
 
 func main() {
@@ -28,7 +29,8 @@ func handleConnection(conn net.Conn) {
 	buf := make([]byte, 100)
 
 	for {
-		conn.Write([]byte("Hi! I am your web-server, what is your name?"))
+		conn.Write([]byte("\n"))
+		conn.Write([]byte("Hi! I am your web-server, what is your name?\n"))
 
 		lenData, err := conn.Read(buf)
 		if err != nil {
@@ -38,7 +40,9 @@ func handleConnection(conn net.Conn) {
 
 		fmt.Println("Message: ", string(buf))
 
-		conn.Write(append([]byte("Nice to meet you "), buf[:lenData]...))
+		resp := fmt.Sprintf("Nice to meet you, %v!\n", string(buf[:lenData]))
 
+		conn.Write(append([]byte(resp)))
+		time.Sleep(3 * time.Second)
 	}
 }
